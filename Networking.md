@@ -27,7 +27,7 @@ There are four layers that comprise TCP/IP:
 After data transfer is completed, the ***connection termination*** closes established virtual circuits and releases all allocated resources.
 
 
-#### **Connection establishment: TCP and the Three-Way Handshake**
+#### *Connection establishment: TCP and the Three-Way Handshake*
 
 **TCP** sets up connections via a three-way handshake, which is also called **SYN-SYN-ACK**. It is named so because three messages are required to start the connection between two network devices. 
 
@@ -46,7 +46,7 @@ At this point, both the client and server have received an acknowledgement of th
 
 ![](2020-08-31-20-20-10.png)
 
-### **Connection termination**
+### *Connection termination*
 
 The connection termination phase uses a four-way handshake, with each side of the connection terminating independently.
 
