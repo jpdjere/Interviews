@@ -1,10 +1,10 @@
-# Networking
+# **Networking**
 
-## TCP/IP
+## **TCP/IP**
 
 **TCP/IP**, which stands for **Transmission Control Protocol/Internet Protocol** is a group of guidelines according to which netowrk devices are connected via the internet. This protocol determines the means by which data is transferred over the internet.
 
-### What do TCP and IP do?
+### **What do TCP and IP do?**
 
 Even though the **TCP** and **IP** protocols are almost always listed together, they have distinct differences.
 
@@ -20,14 +20,14 @@ There are four layers that comprise TCP/IP:
 3. the **Transport Layer**
 4. the **Application Layer**
 
-### Protocol Operation
+### **Protocol Operation**
 
 **TCP protocol operation** is divided into thre phases: connections must be properly established in a multi-step handshake process during the ***connection establishment*** phase, before entering the actual ***data transfer*** phase.
 
 After data transfer is completed, the ***connection termination*** closes established virtual circuits and releases all allocated resources.
 
 
-#### Connection establishment: TCP and the Three-Way Handshake
+#### **Connection establishment: TCP and the Three-Way Handshake**
 
 **TCP** sets up connections via a three-way handshake, which is also called **SYN-SYN-ACK**. It is named so because three messages are required to start the connection between two network devices. 
 
@@ -46,7 +46,7 @@ At this point, both the client and server have received an acknowledgement of th
 
 ![](2020-08-31-20-20-10.png)
 
-### Connection termination
+### **Connection termination**
 
 The connection termination phase uses a four-way handshake, with each side of the connection terminating independently.
 
