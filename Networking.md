@@ -1,6 +1,6 @@
 # TCP/IP
 
-**TCP/IP**, which stands for **Transmission Control Protocol/Internet Protocol** is a group of guidelines according to which netowrk devices are connected via the internet. This protocol determines the means by which data is transferred over the internet.
+**TCP/IP**, which stands for **Transmission Control Protocol/Internet Protocol** is a group of guidelines according to which network devices are connected via the internet. This protocol determines the means by which data is transferred over the internet.
 
 ## What do TCP and IP do?
 
@@ -83,3 +83,90 @@ After the side that sent the first **FIN** has responded with the final **ACK**,
 
 An IP address is a string of numbers that is assigned to a device to identify it on the internet. It is an address, just as the number and street of a home address, where packets can be sent to. That is exactly what the IP does: send packets to IP addresses.
 
+There are two versions of Internet Protocol addresses: IPv4 and the newer IPv6.
+
+### IPv4
+
+Internet Protocol version 4 was developed in the early 1980s.
+
+An **IPv4** comprises four number, each ranging from 0 to 256, separated by periods, a 32-bit address. Because of this, IPv4 has a theoretical limit of 4.3 billion addresses, which was more than enough. But with today's era of smartphones and IoT devices, we have went close to running out of addresses.
+
+While initially workarounds have been implemented to postpone the issue, a successor was quickly needed and IPv6 was developed. At present, IPv4 and IPv6 coexist on the internet, but eventually as IPv4 equipment gets phased out, everything will be IPv6. It is just being rolled out slowly as replacing old IPv4 equipment would be prohibitively expensive and disruptive.
+
+### IPv6
+
+Internet Protocol version 6, or **IPv6** was introduced in the late 1990s as a replacement for IPv4.
+
+**IPv6** uses 128-bit addresses, allowing for a theoretical 340 undecillion addresses. They are represented by eight groups of four hexadecimal digits, with the group separated by colons, although they are often abreviated.
+
+In addition of solving the supply IP addresses, IPv6 also addressed many of version 4 shortcomings.
+
+### IPv4 vs IPv6
+
+IPv6 brought more functionality, in addition to more IP addresses.
+
+* **More Efficient Routing:** IPv6 reduces the size of routing tables and makes routing more efficient and hierarchical. It allows ISPs to aggregate the prefixes of their customer's networks into a single prefix and announce this one prefix to the IPv6 internet.
+* **More Efficient Packet Processing**: IPv6's simpliefied packet header makes packet processing more efficient. Compated to IPv4, IPv6 contains no IP-level checksum, so the checksum does not need to be recalculated at every router hop. Getting rid of the IP-level checksum was possible because most Link Layer technologies already contain checksum and error-control capabilities. In addition, most Transport Layers, which handle end-to-end connectivity, have a checksum that enables error detection.
+* **Directed Data Flows:** IPv6 supports **multicast addressing**, rather than broadcast. This allows bandwith-intensive packet flows (such as multimedia streams) to be sent to multiple destinations simultaneously, saving network bandwidth. Desinterested hosts no longer must process broadcast packets.
+* **Simplified Network Configuration**: IPv6 has a new feature called **autoconfiguration**, which allows a device to generate an IPv6 address as soon as it powers up and puts itself on the network. Adress auto-configuration (addess asignment) is built into IPv6. A router will send the prefix of the local link in its router advertisements. A host can generate its own IP address by appending its Link-Layer (MAC) address converted into Extended Universal Identifier (EUI) 64-bit format, to the 64 bits of the local link prefix.
+* **Support For New Services:** By eliminating Network Address Translation (NAT), true end-to-end connectivity at the IP layer is restored, enabling new and valuable service. Peer-to-peer networks are easier to create and maintain, and services such as VoIP and Quality of Service (QoS) become more robust.
+* **Security:** IPSec, which provides confidentiality, authentication and data integrity, is baked into IPv6. 
+
+
+## Domain Name System (DNS)
+
+**Domain Name System (DNS)** is a decentralized naming system for resources connected to the Internet or a private network, that associates various information with domain names. More prominently, it translates "easy to remember" domain name to the numerical IP addresses needed for locating and identifying computer services and devices across the Internet.
+
+The most common types of records stored in the DNS database are:
+* **IP addresses (A -IPv4- and AAAA -IPv6-)**
+* Domain name aliases **(CNAME)**: A **Canonical Name Record** is a type of resource that maps one domain name (an alias) to another (the canonical name). This can prove convenient when running multiple services (such as an FTP server and a web server, each running on different ports) from a single IP address. One can, for example, point *ftp.example.com* and *www.example.com* to the DNS entry for *example.com*, which in turn has an *A record* which point to the IP address. Then if that IP address ever changes, one only has to change the A record. **CNAME** record must always point to another domain name, never directly to an IP address.
+* **Start of Authority (SOA) record**: contains administrative information about the zone, especially regarding zone transfers. Normally DNS name servers are set up in clusters. The database within each cluster is synchronized through zone transfers. The SOA record for a zone contains data to control the zone transfer. This is the serial number and different timespans. It also contains the email address of the responsible person for this zone, as well as the name of the primary master name server.
+* **SMTP mail exchangers (MX)**: Maps a domain name to a list of *Message Transfer Agents* for that domain. **MTAs** is software that transfers email messages from one comouter to another using **SMTP**.
+* Pointers for **reverse DNS lookups (rDNS)**: it is the querying technique of the DNS to determine the domain name associated with an IP address - the reverse of the usual "forward" lookup of an IP address from a domain name.
+
+### Server Hierarchy
+
+DNS records are part of a distributed database. This means all records are not stored at any one server but they are distributed among several global servers.
+
+DBS servers are divided into zones that form a **hierarchy**.
+
+The servers are the top are called **root servers** and they store IP addresses of other DNS servers, called **top level domain servers (TLD)**.
+
+**TLDs** are divided by site-type, i.e. `.com` or `.edu` and they have mappings to **second-level domain servers**, such as a server for `wikipedia.com`. These are the DNS servers that contain mappings to the actual server that host the domain in question.
+
+![](2020-09-01-00-57-58.png)
+
+A full **DNS resolution**, if the record cannot be found locally, is conducted as follows:
+
+1. The first point of contact for a full resolution is a **root server**. There are now over a thousand root servers (thanks to anycast), although originally there were only 13.
+2. The **root server** returns the **IP address** of the relevant **top-level domain server**.
+3. The **top-level domain server** contains the **DNS record** of the server we are looking fore. The **second-level domain server** returns the IP address to the browser.
+
+![](2020-09-01-01-01-37.png)
+
+
+
+
+
+Falta sobre el cache, y la parte de que pasa cdo escribis la url en chrome
+
+
+
+## Main Application Protocols
+
+HTTP (encryption via HTTPS!?), SMTP, FTP, SSH, etc
+
+## Transfer Protocols (ponerlo arriba de DNS)
+
+TCP already explained
+UDP -> focus on this.
+
+## What happens when?
+
+https://medium.com/@maneesha.wijesinghe1/what-happens-when-you-type-an-url-in-the-browser-and-press-enter-bb0aa2449c1a
+
+https://www.freecodecamp.org/news/what-happens-when-you-hit-url-in-your-browser/
+
+https://github.com/alex/what-happens-when
+
+https://afteracademy.com/blog/what-happens-when-you-type-a-url-in-the-web-browser
