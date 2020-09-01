@@ -110,7 +110,33 @@ IPv6 brought more functionality, in addition to more IP addresses.
 * **Directed Data Flows:** IPv6 supports **multicast addressing**, rather than broadcast. This allows bandwith-intensive packet flows (such as multimedia streams) to be sent to multiple destinations simultaneously, saving network bandwidth. Desinterested hosts no longer must process broadcast packets.
 * **Simplified Network Configuration**: IPv6 has a new feature called **autoconfiguration**, which allows a device to generate an IPv6 address as soon as it powers up and puts itself on the network. Adress auto-configuration (addess asignment) is built into IPv6. A router will send the prefix of the local link in its router advertisements. A host can generate its own IP address by appending its Link-Layer (MAC) address converted into Extended Universal Identifier (EUI) 64-bit format, to the 64 bits of the local link prefix.
 * **Support For New Services:** By eliminating Network Address Translation (NAT), true end-to-end connectivity at the IP layer is restored, enabling new and valuable service. Peer-to-peer networks are easier to create and maintain, and services such as VoIP and Quality of Service (QoS) become more robust.
-* **Security:** IPSec, which provides confidentiality, authentication and data integrity, is baked into IPv6. 
+* **Security:** IPSec, which provides confidentiality, authentication and data integrity, is baked into IPv6.
+
+## User Datagram Protocol (UDP)
+
+**UDP** is a simple message-oriented Transport Layer protocol, documented in RFC 768. It uses a simple connectionless communication model with a minimum of protocol mechanisms: it has no handshaking dialogues and thus exposes the user's program to any unreliability of the underlying network; there is no guarantee of delivery, ordering or duplicate protection.
+
+While it provides **integrity verification via checksum** of the header and payload, it provides no guarantees of message delivery to the Application Layer. 
+
+Also, UDP retains no state of UDP messages once sent (in comparison with TCP). For this reasons, sometimes UDP is referred as Unreliable Datagram Protocol: if transmission reliability is desired when using UDP, it must be implemented on the Application layer, on the actual application.
+
+Being connectionless, **UDP can broadcast** - sent packets can be addressed to be receivable by all devices on the subnet.
+
+UDP is suitable for purposes where error checking and correction are either not necessary or performed in the application. Time-sensitive application often use UDP because dropping packets is perferable to waiting for packets delayed due to retransmission (such as in TCP), which may not be an option in a real-time system.
+
+Streaming media, real-time multiplayer games and voice over IP (VoIP) are examples of applications that often use UDP. In these particular apps, loss of packets is not usually a fatal problems: in VoIP, for example, latency and jitter are the primary concerns. Using TCP for VoIP woould cause delays if any packets were lost as TCP does not provide subsequent data to the application white it is requesting the re-send of the lost data.
+
+### Why does DNS use UDP and not TCP?
+
+DNS is an Application Layer protocol.  TCP is reliable and UDP is not reliable. DNS is supposed to be reliable, but it still uses UDP: why?
+ 
+There are interesting reasons concerning TCP and UDP on the Transport Layer that justify this choice:
+
+1. UDP is much faster. TCP is slow as it requires 3-way handshake. The load on DNS servers is also an important factor. DNS servers (since they use UDP) don’t have to keep connections.
+2. DNS requests are generally very small and fit well within UDP segments.
+3. UDP is not reliable, but reliability can added on Application Layer. An application can use UDP and can be reliable by using a timeout and resend at the Application Layer.
+
+Actually, DNS primarily uses the User Datagram Protocol (UDP) on port number 53 to serve requests. DNS queries consist of a single UDP request from the client followed by a single UDP reply from the server. When the length of the answer exceeds 512 bytes and both client and server support EDNS, larger UDP packets are used. Otherwise, the query is sent again using the Transmission Control Protocol (TCP). TCP is also used for tasks such as zone transfers. Some resolver implementations directly use TCP for all queries.
 
 
 ## Domain Name System (DNS)
@@ -136,30 +162,98 @@ The servers are the top are called **root servers** and they store IP addresses 
 
 ![](2020-09-01-00-57-58.png)
 
-A full **DNS resolution**, if the record cannot be found locally, is conducted as follows:
+When a client such as a **browser** is introduced an URL, the lookup goes through a number of steps:
 
-1. The first point of contact for a full resolution is a **root server**. There are now over a thousand root servers (thanks to anycast), although originally there were only 13.
-2. The **root server** returns the **IP address** of the relevant **top-level domain server**.
-3. The **top-level domain server** contains the **DNS record** of the server we are looking fore. The **second-level domain server** returns the IP address to the browser.
+1. The first thing a **browser** does is check with its own **browser cache**, which maintains its DNS records as a cache for a specified amount of time, for sites that have been previously visited. If its there, the IP address is returned.
+2. If not, the browser requests the underlying **Operating System (OS)**, to check if the hostname is resolved in the local `hosts` files, whose location varies according to the OS.
+3. If is not found there, the browser checks if the domain is found in the **Router Cache**, as they also keep a cache of DNS records.
+4. If not found, a further check is done in the **Internet Service Provider (ISP) Cache**, which also keeps DNS records on its cache.
 
-![](2020-09-01-01-01-37.png)
+If no results are found in any of the temporary stores, a **full recursive DNS resolution** procedure is started: the **ISP's DNS server** initiates a DNS query to find the IP address of the domain we are looking for.
+
+It is called a **recursive search** because the search will repeatedly continue from a DNS server to DNS server until it either finds the IP address or returns an error saying the domain was not found.
+
+1. The first point of contact between the **DNS resolver** for a full resolution is a **root server**. There are now over a thousand root servers (thanks to anycast), although originally there were only 13.
+2. The **root server** returns the **IP address** of the relevant **top-level domain server** (.com, .edu, .org, etc.).
+3. The **top-level domain (TLD) server** return the IP address of the second level domain server (wikipedia.com, bds.edu). **TLD servers** tell the resolver to ask the information to **Authoritative Name servers**.
+4. The **Authoritative Name servers** or **second-level domain server** contains the **DNS record** of the server we are looking for. The **second-level domain server** returns the IP address to the resolver, which caches it in case the same requests comes again. The resolver then returns the address to the **browser** so it can make the request.
+
+![](2020-09-01-20-27-06.png)
+
+A good way to think of this is that a domain name is resolved in reverse:
+
+![](2020-09-01-19-39-13.png)
+
+Though not usually visible, there is a dot after the URL, which represents the root server. The root server return the address of a top-level domain server, in this case for an `io` server.
+
+The `ui` server then returns the addres to the `educative` DNS server.
+
+Finally, the `educative` DNS server returns the IP address to the educative website.
+
+![](2020-09-01-19-55-12.png)
+
+## HTTP (HyperText Transfer Protocol)
+
+**HTTP (HyperText Transfer Protocol)** is an **Application Layer protocol** for transmitting resources, such as HTML documents. It was designed for communication between web browsers and web server, but it can also be used for other purposes.
+
+HTTP follows a classical **client-server model or protocol**, which means a client opens a connection to make a request, then wait until it receives a response. HTTP is a **stateless protocol**, meaning that the server does not keep any state information between two requests, although it is not **sessionless**.
+
+While **HTTP** is run mostly on **TCP**, it can be used with any reliable Transport Protocol which doesn't silently lose packets (such as UDP).
+
+HTTP is the foundation of data communication for the World Wide Web, where hypertext documents include huyperlinks to other resources that the user can esaily access.
+
+**HTTP/1.1** was first documented at the end of the 90s. **HTTP/2** is a major revision of the protocol that was released in 2015, and left untouched all of the original semantics such as methods, status codes, header fields and URIs. Whit is new is how the data is framed and transported between the client and server.
+
+HTTP/2 allows the server **to push content**, that is, to respond with data for more queries than the client requested. This allows the server to supply data it knows a web browser will need to render a web page, without waiting for the browser to examine the first response, and without the overhead of an additional request cycle.
+
+Additional performance improvments of HTTP/2 come from **multiplexing** of requests and responses on the same TCP connection. However, because it still runs on a single connection, there is still potential for **head-of-line blocking** to occur if TCP packets are lost or delayed in transmission.
+
+### Encryption
+
+HTTP/2 is defined for both HTTP and HTTPS URIs, but although the standard does not require usage of encryption, all major implementations of browsers (Firefox, Chrome, Safari, Opera, Edge) jave stated that they will only support HTTP/2 over TLS, which makes encryption de facto mandatory.
+
+### TLS and SSL
+
+**Transport Layer Security (TLS)** and its now deprecated predecessor **Secure Sockets Layer (SSL)** are cryptographic protocols designed to provide communications security over a computer network. Several versions of the protocols find widespread use in applications such as web browsing, email, instant messaging and voice over IP. Websites can use TLS to secure all communications between their servers and web browsers.
+
+The TLS protocols **aims to provide privact and data integrity** between two or more communicating computer apllications. When secured by TLS, connections between a client and a server should have one or more of the following properties:
+
+* The connections is **private (or secure)** because symmetric cryptography is used to encrypt the data transmitted. The keys for this encryption are generated uniquely for each connection and are based on a shared secret that was negotated at the start of the session, in a **TLS handshake**, before the first byte of data is trasmitted.
+* The identity of the communicating parties can be **authenticated** using public-key cryptography.
+* The connection is **reliable** because each message transmitted includes a message integrity check using a **message authentication code** to prevent undetected loss or alteration of data during the transmission.
+
+Since applications can communicate either with or without **TLS**, it is necessary for the client to indicate to the server the setup of a TLS connection. One of the main ways of achieving this is to **use a different port number for TLS connections**, for example, port 443 for HTTPS.
+
+Once the client and server have agreed to use TLS, they negotiate a stateful connection by using a handshaking procedure. Once the handshake is done, the secured connection begins, which is encrypted and decrypted with a session key until the connection closes.
+
+TLS and SSL **do not fit neatly** into any single layer of the network stack or the TCP/IP model. TLS runs **on top of a reliable Transport Layer protocol (e.g. TCP)**, which would imply that it is above it.
+
+### HTTP/3
+
+**HTTP/3** is the proposed successor to HTTP/2. It will use UDP instead of TCP for the underlying transport protocol.
+
+### Components of HTTP-based systems
+
+HTTP is a client-server protocol: clients and server communicate by exchanging individual messages (as opposed to a stream of data). The messages sent by the client, usually a Web browser, are called *requests* and the messages sent by the server as an answer are called *responses*.
+
+*Requests* are sent by one entity, the *user-agent* (or a proxy on its behalf). Each individual request is sent to a server, which handles it and provides an answer, called the *response*.
+
+Between the client and the server there are numerous entities, collectively called **proxies**, which perform different operations and act as gateways or caches, for example.
+
+![](2020-09-02-00-33-51.png)
+
+In 
 
 
+Seguir con Wikipedia
 
+Complementar con MDN
 
+## Cookies, webTokens, etc
 
-Falta sobre el cache, y la parte de que pasa cdo escribis la url en chrome
+## Client-Server models
 
-
-
-## Main Application Protocols
-
-HTTP (encryption via HTTPS!?), SMTP, FTP, SSH, etc
-
-## Transfer Protocols (ponerlo arriba de DNS)
-
-TCP already explained
-UDP -> focus on this.
+Comparison to P2P models
 
 ## What happens when?
 
@@ -170,3 +264,4 @@ https://www.freecodecamp.org/news/what-happens-when-you-hit-url-in-your-browser/
 https://github.com/alex/what-happens-when
 
 https://afteracademy.com/blog/what-happens-when-you-type-a-url-in-the-web-browser
+
