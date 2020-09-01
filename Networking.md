@@ -112,7 +112,7 @@ IPv6 brought more functionality, in addition to more IP addresses.
 * **Support For New Services:** By eliminating Network Address Translation (NAT), true end-to-end connectivity at the IP layer is restored, enabling new and valuable service. Peer-to-peer networks are easier to create and maintain, and services such as VoIP and Quality of Service (QoS) become more robust.
 * **Security:** IPSec, which provides confidentiality, authentication and data integrity, is baked into IPv6.
 
-## User Datagram Protocol (UDP)
+# User Datagram Protocol (UDP)
 
 **UDP** is a simple message-oriented Transport Layer protocol, documented in RFC 768. It uses a simple connectionless communication model with a minimum of protocol mechanisms: it has no handshaking dialogues and thus exposes the user's program to any unreliability of the underlying network; there is no guarantee of delivery, ordering or duplicate protection.
 
@@ -139,7 +139,7 @@ There are interesting reasons concerning TCP and UDP on the Transport Layer that
 Actually, DNS primarily uses the User Datagram Protocol (UDP) on port number 53 to serve requests. DNS queries consist of a single UDP request from the client followed by a single UDP reply from the server. When the length of the answer exceeds 512 bytes and both client and server support EDNS, larger UDP packets are used. Otherwise, the query is sent again using the Transmission Control Protocol (TCP). TCP is also used for tasks such as zone transfers. Some resolver implementations directly use TCP for all queries.
 
 
-## Domain Name System (DNS)
+# Domain Name System (DNS)
 
 **Domain Name System (DNS)** is a decentralized naming system for resources connected to the Internet or a private network, that associates various information with domain names. More prominently, it translates "easy to remember" domain name to the numerical IP addresses needed for locating and identifying computer services and devices across the Internet.
 
@@ -192,7 +192,7 @@ Finally, the `educative` DNS server returns the IP address to the educative webs
 
 ![](2020-09-01-19-55-12.png)
 
-## HTTP (HyperText Transfer Protocol)
+# HTTP (HyperText Transfer Protocol)
 
 **HTTP (HyperText Transfer Protocol)** is an **Application Layer protocol** for transmitting resources, such as HTML documents. It was designed for communication between web browsers and web server, but it can also be used for other purposes.
 
@@ -208,11 +208,11 @@ HTTP/2 allows the server **to push content**, that is, to respond with data for 
 
 Additional performance improvments of HTTP/2 come from **multiplexing** of requests and responses on the same TCP connection. However, because it still runs on a single connection, there is still potential for **head-of-line blocking** to occur if TCP packets are lost or delayed in transmission.
 
-### Encryption
+## Encryption
 
 HTTP/2 is defined for both HTTP and HTTPS URIs, but although the standard does not require usage of encryption, all major implementations of browsers (Firefox, Chrome, Safari, Opera, Edge) jave stated that they will only support HTTP/2 over TLS, which makes encryption de facto mandatory.
 
-### TLS and SSL
+## TLS and SSL
 
 **Transport Layer Security (TLS)** and its now deprecated predecessor **Secure Sockets Layer (SSL)** are cryptographic protocols designed to provide communications security over a computer network. Several versions of the protocols find widespread use in applications such as web browsing, email, instant messaging and voice over IP. Websites can use TLS to secure all communications between their servers and web browsers.
 
@@ -228,11 +228,11 @@ Once the client and server have agreed to use TLS, they negotiate a stateful con
 
 TLS and SSL **do not fit neatly** into any single layer of the network stack or the TCP/IP model. TLS runs **on top of a reliable Transport Layer protocol (e.g. TCP)**, which would imply that it is above it.
 
-### HTTP/3
+## HTTP/3
 
 **HTTP/3** is the proposed successor to HTTP/2. It will use UDP instead of TCP for the underlying transport protocol.
 
-### Components of HTTP-based systems
+## Components of HTTP-based systems
 
 HTTP is a client-server protocol: clients and server communicate by exchanging individual messages (as opposed to a stream of data). The messages sent by the client, usually a Web browser, are called *requests* and the messages sent by the server as an answer are called *responses*.
 
@@ -242,7 +242,95 @@ Between the client and the server there are numerous entities, collectively call
 
 ![](2020-09-02-00-33-51.png)
 
-In 
+### Client: the user-agent
+
+The **user-agent** is any tool that acts on behalf of the user. This role is primarily performed by web browsers, but tools like Postman, also.
+
+The user-agent is **always** the entity initiating the request, although some new technologies and mechanism allow for server-initiated messages.
+
+To present a Web page, the browser sends an original request to fetch the HTML document that represents the page. It then parses this file, making additional requests corresponding to execution scripts, CSS and subresources such as images and videos. The broswer then mixes these resources to present to the user a complete document, the Web page. Scripts executed by the browser can fetch more resources in later phases and the browser updates the Web page accordingly.
+
+A Web page is a **hypertext document**, which means some parts of it are link which can be activated to fetch a new web page and navigate through the Web.
+
+### Server: the Web server
+
+On the opposite side of the communciation channel is the server, which *serves* the document as requested by the client. It appears as a single machine virtually: this is because it may actually be a collection of server, sharing the load through load balancing, or a complex piece of software interrogating other services (like a cache, a database, etc), generating the requested document on demand.
+
+### Proxies
+
+Between the client and the serves, numerous computers and machines relay the HTTP messages. Due to the layered nature of the **network stack**, most of these operate on the Transport, Internet or Link layers, but those operating on the Application layer are called **proxies**.
+
+**Proxies** can be **transparent** (forward requests they receive without altering in any way), or **non-transparent** (they change the request in some way before passing it forward).
+
+Proxies can perform a number of functions:
+* **caching:** the cache can be public or private, like the browser cache
+* **filtering:** like an antivirus, firewall or parental control
+* **load balancing:** allowing multiple servers to serve a request to a specific resource
+* **authentication:** to control access to different resources
+* **logging:** allow storage of historical information
+
+## Basic aspects of HTTP
+
+### Simple
+
+HTTP is designed to be **simple and human readable**, even with the added complexity introduced by HTTP/2 by encapsulating the HTTP messages into frames. HTTP messages can be read and understood by humands, providing easier testing and less complexity.
+
+### Extensible
+
+**HTTP headers** make the **protocol easy to extend and experiment with.** New functionality can be introduced with a simple agreement between client and server about a new header's semantics.
+
+### Stateless, but not sessionless
+
+**HTTP is stateless:** there is no link between two requests being successively carried out on the same connection.
+While this could mean a problem for users attempting to interacti with certain pages coherently (like an e-commerce basket), **HTTP cookies**, are added to the workflow (thanks to header extensibility), which allow session creation on each HTTP request, maintaining a context.
+
+### Connections
+
+Connections are controlled at the Transport Layer, so out of scope of HTTP. However, it relies on the connection being reliable (not losing packets on the way), therefore HTTP relies on TCP, which is connection-based, and not on UDP.
+
+The default behaviour of HTTP/1.0 was to open a separate TCP connection for each HTTP request/response pair. This is less efficient than sharing a single TCP connection when multiple requests are sin in close succession.
+
+So HTTP/1.1 introduce *pipelining* and *persistent connections*. HTTP/2 went a step further by **multiplexing** messages over a single connection. In HTTP/3 the entire Transport Protocol is expected to be switched to QUIC, which builds on UDP.
+
+## Relaxing the origin constraint (CORS)
+
+**Cross-Origin Resource Sharing (CORS)** is a
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+## Sessions and Cookies
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
+### WebTokens
+
+[webtokens](https://dzone.com/articles/cookies-vs-tokens-the-definitive-guide)
+
+## HTTP flow and messages
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+
+
+## HTTP Request Methods
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+
+### Idempotent request methods
+
+https://developer.mozilla.org/en-US/docs/Glossary/idempotent
+
+### Safe request methods
+
+https://developer.mozilla.org/en-US/docs/Glossary/safe
+
+## HTTP Response Status Codes
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+## Cacheable HTTP responses
+
+https://developer.mozilla.org/en-US/docs/Glossary/cacheable
+
+
 
 
 Seguir con Wikipedia
