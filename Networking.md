@@ -286,7 +286,7 @@ While this could mean a problem for users attempting to interacti with certain p
 
 ### Connections
 
-Connections are controlled at the Transport Layer, so out of scope of HTTP. However, it relies on the connection being reliable (not losing packets on the way), therefore HTTP relies on TCP, which is connection-based, and not on UDP.
+Connections are controlled at the Transport Layer, so they are out of scope for HTTP. However, it relies on the connection being reliable (not losing packets on the way), therefore HTTP relies on TCP, which is connection-based, and not on UDP.
 
 The default behaviour of HTTP/1.0 was to open a separate TCP connection for each HTTP request/response pair. This is less efficient than sharing a single TCP connection when multiple requests are sin in close succession.
 
@@ -294,25 +294,181 @@ So HTTP/1.1 introduce *pipelining* and *persistent connections*. HTTP/2 went a s
 
 ## Relaxing the origin constraint (CORS)
 
-**Cross-Origin Resource Sharing (CORS)** is a
-https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+**Cross-Origin Resource Sharing (CORS)** is a mechanism that uses additional HTTP headers to tell browsers running at one origin to give a web application access to selected resources from a different origin.
 
-## Sessions and Cookies
+A web application executes a cross-origin HTTP request when it requests a resource that has a different origin (domain, protocol or port) than its own.
 
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+An example: the frontend JS code served from `https://domain-a.com` uses `fetch`  to make a request for `https://domain-b.com/data.json`.
 
-### WebTokens
+For security reasons, browsers normally restrict cross-origin HTTP requests initiated from scripts. For example, `XMLHttpRequest` and `fetch` follow the **same-origin policy**: a web app using those APIs can only request resources from the same origin tha appliacation was loaded from, **unless the response from the other origin includes the right CORS headers.**
 
-[webtokens](https://dzone.com/articles/cookies-vs-tokens-the-definitive-guide)
+### Simple requests
 
-## HTTP flow and messages
+**Simple requests** are requests that **don't trigger a CORS preflight**.
 
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+For example, suppose web content at `https://foo.example` wishes to invoke content on domain `https://bar.other`. This performs a simpel exchange between the client and the server, using CORS headers to handle the priviliges:
 
+![](2020-09-02-18-03-08.png)
 
-## HTTP Request Methods
+Let's take a look at the browser request and the server response:
 
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+```
+GET /resources/public-data/ HTTP/1.1
+Host: bar.other
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:71.0) Gecko/20100101 Firefox/71.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Connection: keep-alive
+Origin: https://foo.example
+```
+
+Notice the Origin header, which shows from which domain the invocation is coming from.
+
+```
+HTTP/1.1 200 OK
+Date: Mon, 01 Dec 2008 00:23:53 GMT
+Server: Apache/2
+Access-Control-Allow-Origin: *
+Keep-Alive: timeout=2, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: application/xml
+
+[…XML Data…]
+```
+
+In response, the server sends back an `Access-Control-Allow-Origin` header, set to the value `*`, which means that the resource can be accessed by **any domain.** If the resource owners at the server at `https://bar.other` wished to restrict access to requests coming only from `https://foo.example`, they would send:
+
+```
+Access-Control-Allow-Origin: https://foo.example
+```
+
+### Preflighted requests
+
+Unlike simple requests, **preflighted requests** first send an HTTP request with the **OPTIONS** method to the resource on the other domain, to determine if the actual request is safe to send. 
+
+![](2020-09-02-18-10-20.png)
+
+More info on: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+### Requests with credentials
+
+The most intersting capability of `fetch` and `CORS` is the ability to make **credentialed requests** that are aware of **HTTP Cookies** and **HTTP Authentication information**. By default, requests do not send credentials.
+
+![](2020-09-02-18-14-02.png)
+
+The browser would reject any response that does not have the `Access-Control-Allow-Credentials: true` header, and would not make the response available to the invoking web content.
+
+## Session Cookies and Tokens
+
+### HTTP Cookies
+
+An **HTTP cookie** is a small piece of data that a server sends to the user's web browser. The browser may store it and send it back with later requests to the same server. Typically, it is used to tell if two request came from the same browser. It remembers stateful information for the stateless HTTP protocol.
+
+Cookies are used for mainly three purposes:
+
+**1. Session management:** Logins, shopping carts, or anything that a server should remember.
+**1. Personalization:** User preferences, themes and other setting
+**1. Tracking:** Recording and analyzing user behavior,
+
+After receiving an HTTP request, a server can send one or mor `Set-Cookie` headers with the response. The cookie is usually stored by the browser, and then is is sent back in subsequent requests with the `Cookie` HTTP header. (an expiration date or duration for the cookie can be sent, after which it is considered expired.)
+
+A simple cookie is set like this:
+
+```
+Set-Cookie: <cookieName>=<cookieValue>
+```
+
+A response from the server sending header to tell the client to store a pair of cookies:
+
+```
+HTTP/2.0 200 OK
+Content-Type: text/html
+Set-Cookie: userPreference1=blue
+Set-Cookie: userBrands=burberry
+
+[page content]
+```
+
+Then, on every subsequent request to the server, the browsers sends them back using the `Cookie` header:
+
+```
+GET /sample_page.html HTTP/2.0
+Host: www.example.org
+Cookie: userPreference1=blue; userBrands=burberry
+```
+
+### Tracking and Third-Party Cookies
+
+A cooke is associated with a domain. If this domain is the same as the domain of the page the user is on, then that cooke is called a **first-party cookie**. If the domain is different, it is a **third-party cookie**.
+
+While the server hosting a web page sets first-party cookies, the page may contain images or other components stored on servers in other domains (for example, ad banners) **which may set third-party cookies**. These are mainly used for advertisign and tracking across the web: a third party server can build up a profile of a user's browsing history and habits based on cookies sent to it by the same browser when accessing multiple sites.
+
+### Cookie vs WebTokens for Authentication
+
+This diagram is a great introduction and simplified overview of the difference between cookie and token approaches to authentication.
+
+![](2020-09-02-18-41-49.png)
+
+**Cookie-based Authentication** was the default, tried-and-true method for handlung user authentication. It is **stateful:** an authentication record or session must be kept both server and client-side. The server needs to keep track of active sessions in a database, while on the front-end, a cookie is created that holds a session identifier. Let's look at a flow of this:
+
+1. User enters their login credentials.
+2. Server verifies the credentials and creates a session, which is stored in a database.
+3. A cookie with the session id is set in the user's browser by responding with the`Set-Cookie` header.
+4. On subsequent requests, the session id is verified againt the database, and if valid, the request is processed and responsed.
+5. If the user logs out of the app, the session is destroyed both client-side and server-side.
+
+**Token-based Authentication** has gained prevalence over the last few years, especially due to the rise of SPAs and web APIs. We generally talk about authentication with **JSON Web Tokens (JWTs)**. Token-based authentication is **stateless**: the server does not keep a record of which users are logged in or which tokens have been issued. Instead, every requet to the server is accompanied by a token which the server uses to verift the authenticity of the request. It is sent usually in the `Authentication` header with `Bearer {JWT}` as value, but can also be sent in the body of a POST or as query param.
+
+1. User enters their login credentials.
+2. Server verifies the credentials are correct and returns a signed token.
+3. This token is stored client-side, most commonly in local storage - but can be also stored in session storage or even in a cookie.
+4. Subsequent requests to the server include this token in the `Authorization` header, or some other place.
+5. Ther server decodes the JWT, and if the token is valid, it processes the request.
+6. Once a user logs out, the token is destroyed client-side, no interaction with the server is necessary.
+
+**Token-Based Advantages are:**
+
+1. **Stateless, Scalable and Decoupled:** Authentication with tokens is **stateless**. The back-end does not need to keep a record of tokens. Tokens are self-contained, with all the data required to check its validity as well as to pass user information. The server's only job become to sign tokens on a successful login request and then verify that incoming tokens are valid.
+2. **Cross Domain and CORS**: While cookies work well with domains and subdomains, they encoutner problems across domains. In contrast, a tokens-based approach with enabled CORS makes it tirivial to expose APIs to different services and domains: JWTs are required and check at all requests to the back-end, so as long as the token is valid, it can be processed.
+3. **Store Data in the JWT**: While with cookies you simply store the session id, JWTs allow you to store any type of metadata, as long as it's valid JSON. So you can iclude data as the user id, expiration of the token or even more data such as who issued the token, scopes or permissions for the user, etc.
+4. **Performance**: In the cookie-based approach, the back-end has to do a lookup to its database to look the session up, so the trip will be longer. Additionaly, with the JWTs containing more data, the server can save on lookups, for example, to know which scopes the user has. For example, say you had an API resource `/api/orders` that retrieves the latest orders placed via your app, but only users with the role of admin have access to view this data. In a cookie based approach, once the request is made, you'd have one call or lookup to the database to verify that the session is valid, another to get the user data and verify that the user has the role of admin, and finally a third call to get the data. On the other hand, with a JWT approach, you can store the user role in the JWT, so once the request is made and the JWT verified, you can make a single call to the database to retrieve the orders.
+5. **Mobile Ready**: Native mobile platforms (such as Android and iOS) and cookies do not mix well: it is possible, but there are many limitations and considerations. Tokens are much easier to implement on both iOS and Android, as well as IoT applications and services, that do not have a concept of a cookie store.
+
+**Token-Based Disadvantages are:**
+
+1. **Size**: A session cookie is relatively tine compared even to the smallest of JWTs. Depending on the use case and claims added to it, its size can become problematic - it should be added to **all** requests to the server.
+2. **Where to store them?**: While cookie-based approaches give you no option on where to store it, the implementer has the choice with JWTs. Commonly, it is stored in local storage, but this is sandboxed to a specific domain, excluding subdomains. It can also be stored in a cookie, but here the size of a cookie (4kB) may be problematic depending on the JWT token size.
+
+### JWTs: How do they work?
+
+https://jwt.io/introduction/
+
+## HTTP messages
+
+HTTP/1.1 messages and earlier are human readable. Since HTTP/2 these messages are embedded into a binary structure called a **frame**, but the semantics of each message is unchaged.
+
+### HTTP Requests
+
+![](2020-09-02-20-14-27.png)
+
+It consists of the following elements:
+
+1. An **HTTP method**, that defines the operation that the client wants to perform.
+2. The **path** to the resource: the URL of the resource stripped out from elements that are obvious from the context, like protocol, domain or TCP port.
+3. The **version of the HTTP protocol**
+4. Optional **request headers** fields
+5. Optional **message body** for some methods
+
+### HTTP Request Methods
+
+HTTP defines a set of **request methods** to indicate a desired action to be performed on a given resource. Each of the methods implements a different semantic, but some common features are shared by a group of them: e.g. a request method can be *safe*, *idempotent* or *cacheable*. Method names are case-sensitive, in comparison with header field names.
+
+* **GET**: Requests a representation of a given resource. Requests using this method should only retrieve data and should have no other effect.
+* **HEAD**: Asks for a response identical to that of a GET request, but without the response body. Useful for retrieving meta-information written in the response header or in the response status code, without having to transport the entire content.
+* **POST**: 
+* **GET**: 
 
 ### Idempotent request methods
 
@@ -329,6 +485,12 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 ## Cacheable HTTP responses
 
 https://developer.mozilla.org/en-US/docs/Glossary/cacheable
+
+## FTP
+
+## SMTP
+
+## SSH
 
 
 
