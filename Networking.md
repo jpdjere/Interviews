@@ -465,45 +465,120 @@ It consists of the following elements:
 
 HTTP defines a set of **request methods** to indicate a desired action to be performed on a given resource. Each of the methods implements a different semantic, but some common features are shared by a group of them: e.g. a request method can be *safe*, *idempotent* or *cacheable*. Method names are case-sensitive, in comparison with header field names.
 
-* **GET**: Requests a representation of a given resource. Requests using this method should only retrieve data and should have no other effect.
-* **HEAD**: Asks for a response identical to that of a GET request, but without the response body. Useful for retrieving meta-information written in the response header or in the response status code, without having to transport the entire content.
-* **POST**: 
-* **GET**: 
+* `GET`: Requests a representation of a given resource. Requests using this method should only retrieve data and should have no other effect.
+* `HEAD`: Asks for a response identical to that of a GET request, but without the response body. Useful for retrieving meta-information written in the response header or in the response status code, without having to transport the entire content.
+* `POST`: Used to submit an entity to the specified resource, often causing a change in state or side effects on the server, for example, adding an item to a database.
+* `PUT`: Replaces all current representations of the target resource with the request payload. If the URI does not point to an existing resource, then the server can create the resource with that URI.
+* `DELETE`: Used to delete a resource in the specified URI.
+* `TRACE`: Echoes the recieved request back to the client so that it can see if any changes or additions ahve been made by intermediate servers or proxies.
+* `OPTIONS`: Returns the HTTP methods that the server supports for a specified URL.
+* `CONNECT`: Establishes a tunnel to the server identified by the target resource.
+* `PATCH`: Applies partial modificiation to a resource.
 
 ### Idempotent request methods
 
-https://developer.mozilla.org/en-US/docs/Glossary/idempotent
+An HTTP method is **idempotent** if an identical request can be made several times in a row with the same effect, while leaving the server in the same state. 
+
+Implemented correctly, `GET`, `HEAD`, `PUT` and `DELETE` are idempotent.
+
+To be idempotent, only the acutal back-end state of the server is considered, whilte the status code return by each request might differ: the first call of a `DELETE` will probably return `200`m while succesive ones will likely return `400`.
 
 ### Safe request methods
 
-https://developer.mozilla.org/en-US/docs/Glossary/safe
+An HTTP method is **safe** if it doesn't alter the state of the server: a method is safe if it leads to a read-only operation. `GET`, `HEAD`, `OPTIONS` and `TRACE` are safe.
 
-## HTTP Response Status Codes
+All safe methods are idempotent, but not the other way around: `PUT` and `DELETE` are idempotent but not safe.
 
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+### HTTP Response
+
+An HTTP response method consists of:
+
+![](2020-09-02-21-26-27.png)
+
+1. the version of the **HTTP protocol** followed
+2. the **status code**, which indicates if the request was succesful or not, and why.
+3. a **status message**, a short description of the status code.
+4. **HTTP headers**, similar to request headers
+5. An optional **body** containing the fetched resource
+
+### HTTP Response Status Codes
+
+HTTP response status codes indicate whether a specific HTTP request has been succesfully completed, or not, and why, and the responses are grouped in five classes:
+
+1. **Informational responses:** from 100 to 199
+2. **Succesful responses:** from 200 to 299
+3. **Redirects:** from 300 to 309
+4. **Client-side errors**: from 400 to 409
+5. **Server-side errors:** from 500 to 599
 
 ## Cacheable HTTP responses
 
-https://developer.mozilla.org/en-US/docs/Glossary/cacheable
+A **cacheable** response is an HTTP response that can be cached, that is: they are responses that are allowed to be stored for future reuse.
 
-## FTP
+Not all HTTP methods can be cached: there are the following constraints:
 
-## SMTP
+1. The method used in the request is itself cacheable: it is either a **GET** or a **HEAD** (`POST` and `PATCH` can theoretically be cached, but they are almost never done in practice).
+2. The status code also has to be cacheable: `200`, `203`, `204`, `206`, `300`, `301`, `404`, `406`, `501`.
+3. The `Cache-Control` header can prevent cacheing.
 
-## SSH
+## FTP (File Transfer Protocol)
 
+The **File Transfer Protocol** is a standard Application Layer protocol used for the transfer of files between a client and a server on a computer network. It runs over the TCP Transport Protocol.
 
+It is built on the client-server model architecture, and users may authenticate themselves using a clear-text sign-in protocol, normally in the form of a username and password - but can also connect anonymously if the server allows it. 
 
+For secure transmission that protects the user and password, FTP is often secured with TLS/SSL or directly replaced by SSH File Transfer Protocol (SFTP).
 
-Seguir con Wikipedia
+FTP has **a stateful control connection** which maintains a current working directory and other flags, and each transfer requires a secondary connection through which the data is transferred.
 
-Complementar con MDN
+Setting up an FTP control connection is quite slow due to the round-trip delays of sending all of the required commands and awaiting responses, so it is customary to set up a control connection and hold it open for multiple file transfers rather than drop and restablish a session afresh for each transfer. In contrast, HTTP originally dropped the conenction because doing so was cheap and quick.
 
-## Cookies, webTokens, etc
+FTP was not designed to be a secure protocol, and has many security weaknesses: it does not encrypt is traffic; all transmissions are in clear text and usernames, passwords, commands and data can by read by anyone able to perform a packet capture on the network.
+
+Common solutions to this problems are:
+
+1. Using the secure versions of the insecure protocol: FTPS instead of FTP, which applies TLS security on top of TLS.
+2. Using a different, more secure protocol such as SFTP (SSH File Transfer Protocol), which is not FTP run over SSH.
+3. Using directly SSH to set up a secure tunnel, or using a Virtual Private Network (VPN).
+
+## SSH (Secure Shell)
+
+**Secure Shell (SSH)** is a cryptographic Application Layer protocol for operating network services securely over an insecured network. Typical application include remote command-line, login and remote command execution.
+
+SSH provides a **secure channel** (a way of transferring data that is resistant to both overhearing and tampering) over an unsecured network by using a client-server architecture, connecting an SSH client application with an SSH server.
+
+It has assigned port 22 for TCP, UDP and SCTP.
+
+SSH uses public-key cryptography to authenticate the remote computer and allow it to authenticate the user, if necessary.
+
+SSH uses a manually generated public-private key pair to perform the authentication, allowing users or programs to log in without having to specify a password. In this scenario, the public key is placed on all computers that must allow access to the owner of the matching private key (the owner keeps the private key secret) - is is usually stored on an OS file. While authentication is based on the private key, the key itself is never transferred through the network during authentication. SSH only verifies whether the same person requesting access to the host with a certain public key also owns the matching private key. 
+
+## Public-key cryptography
+
+**Public-key cryptography** is a cryptographic system that uses pairs of keys: **public keys**, which may be disseminated widely, and **private keys**, which are known only to the owner. 
+
+The generation of such keys depends on cryptographic algorithms based on mathematical problems to produce one-way functions. Effective security only requires keeping the private key private; the public key can be openly distributed without compromising security.
+
+In such a system, any person can encrypt a message using the receiver's public key, but that encrypted message can only be decrypted with the receiver's private key.
+
+![](2020-09-02-23-19-04.png)
+
+Robust authentication is also possible. A sender can combine a message with their own private key to create a short **digital signature** on the message. Anyone with the sender's corresponding public key can combine the same message and the supposed digital signature associated with it to verify whether the signature was valid, i.e. made by the owner of the corresponding private key.
+
+![](2020-09-02-23-20-09.png)
+
+## SMTP (Simple Mail Transfer Protocol)
+
+The **Simple Mail Transfer Protocol (SMTP)** is a communication protocol on the Application Layer for electronic mail transmission.
+
+Mail server
+
 
 ## Client-Server models
 
 Comparison to P2P models
+
+## REST
 
 ## What happens when?
 
