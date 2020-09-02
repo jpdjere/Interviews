@@ -575,13 +575,67 @@ Mail servers and other message transfer agents use SMTP to send and receive mail
 
 User-level email clients such as Gmail typically use SMTP only for sending messages to a mail server for relaying. For retrieving messages, **IMAP** and **POP3** are standard, but propietary protocols also exist and are used by propietary servers.
 
-Protocol overview...
+SMTP is a **connection-oriented, text-based protocol** in which a mail sender communicates with a mail receiver by issuing command strings and supplying necessary data over a reliable ordered data strea channel typically a **Transmission Control Protocol (TCP)** connection.
+
+Details on protocol: https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
+
+SMTP is a delivery protocol only. In normal use, mail is "pushed" to a destination mail server. Mail is routes based on the destination server, not the individual users(s) to which it is addressed. Other protocols such as as the **Post Office Protocol (POP#3)** and the **Internet Message Access Protocol (IMAP)** are specifically designed for use by individual users retrieving messages and managing mail boxes.
 
 ## Client-Server models
 
-Comparison to P2P models
+The **client-server model** is a **distributed application** structure that partitions tasks or workloads between the providers of a resource or service, called **servers**, and resource or service requesters, called **clients**.
 
-## REST
+Often clients and servers communicate over a computer network on separate hardware, but both client and server may reside in the same system.
+
+A server host runs one or mor server programs, which share their resources with clients. A client does not share its resources, but it requests content or service from a server.
+
+Clients therefore initiate communication sessions with server, which await incoming requests.
+
+Examples of computer applications taht user the client-server model are the World Wide Web, email and network printing.
+
+Clients and servers exchanges messages in a request-response messaging pattern. The client sends a request, and the server returns a response. To communicate, the computers must have a common language, and they must follow rules so that both the client and the server know what to expect: the language and rules of communication are defined in a communications protocol. 
+
+All client-server protocols operate in the **Application Layer**, which defines the basic patterns of the dialogue. To formalize the data exchange even further, the server may implement an **API (Application Programming Interface)**, an abstraction layer for accesing a service, which retricts communication to a specific format.
+
+A server may receive requests from many distinct clients in a short period of time. A computer can only perform a limited number of tasks at any moment, so it relies on a scheduling sustem to prioritize incoming requests from clients to accomodate them. To prevent abuse and maximize availability, the server software may limit the availability to clients. Denial of service attacks are designed to exploit a server's obligation to process requests by overloading it with excessive requests rates.
+
+### Comparison to peer-to-peer architecture
+
+In addition to the client-server model, another **distributed application** structure is the **peer-to-peer (P2P)** application architecture.
+
+In the client-server model, the server is often designed to operate as a centralized sustem that serves many clientes. The computing power, memory and storage requirements of a server must be scaled appropriately to the expected workload of the clients. Load-balancing and failover systems are often employed to scale the server beyond a single physical machine.
+
+In a peer-to-peer network, two or more computers (peers) pool their resources and communicate in a **decentralized system**. Peers are equipotent and coequal nodes in a **non-hierarchical network**, and unlike clients in the client-server model, the peers communicate directly with each other.
+
+In peer-to-peer networking, an **algorithm** in the peer-to-peer communications protocol balances load, and even peers with modest resources can help to share the load. If a node becomes unavailable, its shared resources remain available as lons as other peers offer it. 
+
+Ideally, a peer does not need to achieve high availability because other, redundant peers make up for any resource downtime; as the availability and load capacity of peers change, the protocol reroutes requests.
+
+![](2020-09-03-00-55-52.png)
+![](2020-09-03-00-56-02.png)
+
+## REST (Representational State Transfer)
+
+**Representational State Transfer (REST)** is a software architectural style that defines a set of constraints to be used for creating Web services.
+
+Web services that conform to this style are called RESTful Web services and provide interoperability between computer systems on the internet. RESTful services allow the requesting systems to access and manipulate representations of Web resources by using a **uniform and predefined set of stateless operations**.
+
+In a RESTful Web service, requests made to a resource URI will elicit a response with a payload formatted in HTML, XML, JSON or some other format. The response can confirm that some alteration has been made to the resource state, and the response can also provide hypertext links to other related resources.
+
+By using a stateless protocol and standar operations, RESTful systems aim for fast performance, reliability and the ability to grow by reusing components that can be managed and updated without affecting the system as a whole, even while it is running.
+
+### REST Architectural Constraints
+
+Six guiding constraints define a RESTful system, and they restric the ways that the server can process and respond to client requests. By operating within these constraints, the system gains desirable non-functional properties, such as performance, scalability, simplicity, modifiability, visibility, portability and reliability.
+
+* **Client-server architecture**: the priciple behind the client-server constraint is the **separation of concerns**. Separating the user interface concerns from the data storage concerns improves the ***portability*** of the user interfaces across multiple platforms. It also improves ***scalability*** by simplyfing the server components.
+* **Statelessness**: The client-server communication is constrained by no client context being stored on the server between requests. Each request from any client contains all the information necessary to service the request, and the session state is held in the client. The session state can be transferred by the server to another service such as a databe to maintain a persistent state for a period, and allow features such as authentication or personalization.
+* **Cacheability**: Clients and intermediaries can cache responses. Responses must, either implicitly or explicitly, define themselves as cacheable or non-cacheable to prevent stale or inappropiate dataa in response to further requests. Well-manage caching can completely eliminate some client-server interaction, improving **scalability** and **performance**.
+* **Layered system**: A client should not ordinarily tell whether is is connected directly to the end server, or to an intermediary along the way. If a proxy or load balancer is placed between the client and server, it won't affect their communications and there won't be a need to update the client or server code. These intermediary servers can improve **scalability** by enabling load balancing and by providing shared caches.
+*  **Uniform interface**: it simplifies and decouples the architecture, enabling each part to evolve independently. It has four constraints:
+   *  **Resource identification in requests**: Individual resoures are identified in requests, for example, using URIs. The resources themselves are conceptually separate from the representations that are returned to the client. For example, the server could send data from its database as HTML, XML or as JSON - none of whcih are the erver's internal representation.
+   *  **Resource manipulation through representations**: When a client holds a representation of a resource, including any metadata attached, it has enough information to modift or delete the resource's state.
+   *  **Self-descriptive messages**: Each message includes enough information to describe how to process the message. For example, which parse to invoke can be specified by the media type.
 
 ## What happens when?
 
