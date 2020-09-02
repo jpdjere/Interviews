@@ -571,8 +571,11 @@ Robust authentication is also possible. A sender can combine a message with thei
 
 The **Simple Mail Transfer Protocol (SMTP)** is a communication protocol on the Application Layer for electronic mail transmission.
 
-Mail server
+Mail servers and other message transfer agents use SMTP to send and receive mail messages. SMTP servers commobly use the TCP protocol on **port 25**.
 
+User-level email clients such as Gmail typically use SMTP only for sending messages to a mail server for relaying. For retrieving messages, **IMAP** and **POP3** are standard, but propietary protocols also exist and are used by propietary servers.
+
+Protocol overview...
 
 ## Client-Server models
 
