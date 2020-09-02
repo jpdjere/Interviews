@@ -126,7 +126,7 @@ UDP is suitable for purposes where error checking and correction are either not 
 
 Streaming media, real-time multiplayer games and voice over IP (VoIP) are examples of applications that often use UDP. In these particular apps, loss of packets is not usually a fatal problems: in VoIP, for example, latency and jitter are the primary concerns. Using TCP for VoIP woould cause delays if any packets were lost as TCP does not provide subsequent data to the application white it is requesting the re-send of the lost data.
 
-### Why does DNS use UDP and not TCP?
+## Why does DNS use UDP and not TCP?
 
 DNS is an Application Layer protocol.  TCP is reliable and UDP is not reliable. DNS is supposed to be reliable, but it still uses UDP: why?
  
@@ -521,7 +521,7 @@ Not all HTTP methods can be cached: there are the following constraints:
 2. The status code also has to be cacheable: `200`, `203`, `204`, `206`, `300`, `301`, `404`, `406`, `501`.
 3. The `Cache-Control` header can prevent cacheing.
 
-## FTP (File Transfer Protocol)
+# FTP (File Transfer Protocol)
 
 The **File Transfer Protocol** is a standard Application Layer protocol used for the transfer of files between a client and a server on a computer network. It runs over the TCP Transport Protocol.
 
@@ -541,7 +541,7 @@ Common solutions to this problems are:
 2. Using a different, more secure protocol such as SFTP (SSH File Transfer Protocol), which is not FTP run over SSH.
 3. Using directly SSH to set up a secure tunnel, or using a Virtual Private Network (VPN).
 
-## SSH (Secure Shell)
+# SSH (Secure Shell)
 
 **Secure Shell (SSH)** is a cryptographic Application Layer protocol for operating network services securely over an insecured network. Typical application include remote command-line, login and remote command execution.
 
@@ -553,7 +553,7 @@ SSH uses public-key cryptography to authenticate the remote computer and allow i
 
 SSH uses a manually generated public-private key pair to perform the authentication, allowing users or programs to log in without having to specify a password. In this scenario, the public key is placed on all computers that must allow access to the owner of the matching private key (the owner keeps the private key secret) - is is usually stored on an OS file. While authentication is based on the private key, the key itself is never transferred through the network during authentication. SSH only verifies whether the same person requesting access to the host with a certain public key also owns the matching private key. 
 
-## Public-key cryptography
+# Public-key cryptography
 
 **Public-key cryptography** is a cryptographic system that uses pairs of keys: **public keys**, which may be disseminated widely, and **private keys**, which are known only to the owner. 
 
@@ -567,7 +567,7 @@ Robust authentication is also possible. A sender can combine a message with thei
 
 ![](2020-09-02-23-20-09.png)
 
-## SMTP (Simple Mail Transfer Protocol)
+# SMTP (Simple Mail Transfer Protocol)
 
 The **Simple Mail Transfer Protocol (SMTP)** is a communication protocol on the Application Layer for electronic mail transmission.
 
@@ -581,7 +581,7 @@ Details on protocol: https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
 
 SMTP is a delivery protocol only. In normal use, mail is "pushed" to a destination mail server. Mail is routes based on the destination server, not the individual users(s) to which it is addressed. Other protocols such as as the **Post Office Protocol (POP#3)** and the **Internet Message Access Protocol (IMAP)** are specifically designed for use by individual users retrieving messages and managing mail boxes.
 
-## Client-Server models
+# Client-Server models
 
 The **client-server model** is a **distributed application** structure that partitions tasks or workloads between the providers of a resource or service, called **servers**, and resource or service requesters, called **clients**.
 
@@ -599,7 +599,7 @@ All client-server protocols operate in the **Application Layer**, which defines 
 
 A server may receive requests from many distinct clients in a short period of time. A computer can only perform a limited number of tasks at any moment, so it relies on a scheduling sustem to prioritize incoming requests from clients to accomodate them. To prevent abuse and maximize availability, the server software may limit the availability to clients. Denial of service attacks are designed to exploit a server's obligation to process requests by overloading it with excessive requests rates.
 
-### Comparison to peer-to-peer architecture
+## Comparison to peer-to-peer architecture
 
 In addition to the client-server model, another **distributed application** structure is the **peer-to-peer (P2P)** application architecture.
 
@@ -614,7 +614,7 @@ Ideally, a peer does not need to achieve high availability because other, redund
 ![](2020-09-03-00-55-52.png)
 ![](2020-09-03-00-56-02.png)
 
-## REST (Representational State Transfer)
+# REST (Representational State Transfer)
 
 **Representational State Transfer (REST)** is a software architectural style that defines a set of constraints to be used for creating Web services.
 
@@ -624,7 +624,7 @@ In a RESTful Web service, requests made to a resource URI will elicit a response
 
 By using a stateless protocol and standar operations, RESTful systems aim for fast performance, reliability and the ability to grow by reusing components that can be managed and updated without affecting the system as a whole, even while it is running.
 
-### REST Architectural Constraints
+## REST Architectural Constraints
 
 Six guiding constraints define a RESTful system, and they restric the ways that the server can process and respond to client requests. By operating within these constraints, the system gains desirable non-functional properties, such as performance, scalability, simplicity, modifiability, visibility, portability and reliability.
 
@@ -637,7 +637,7 @@ Six guiding constraints define a RESTful system, and they restric the ways that 
    *  **Resource manipulation through representations**: When a client holds a representation of a resource, including any metadata attached, it has enough information to modift or delete the resource's state.
    *  **Self-descriptive messages**: Each message includes enough information to describe how to process the message. For example, which parse to invoke can be specified by the media type.
 
-## What happens when?
+# What happens when?
 
 https://medium.com/@maneesha.wijesinghe1/what-happens-when-you-type-an-url-in-the-browser-and-press-enter-bb0aa2449c1a
 
