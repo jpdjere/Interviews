@@ -28,13 +28,16 @@ His questions
 QUESTIONS FOR CUSTOMER SOLUTIONS ENGINEER
 1.
 Applied online, contacted by recruiter who went through initial phone screen.
-Recruiter set up Google Hangout interview. I was asked questions ranging from technical skills to project management skills.
-Then we had a shared Google Doc and went through some programming questions where I needed to code on the fly. Most were dealing with associative arrays.
+Recruiter set up Google Hangout interview. I was asked questions ranging from technical skills
+to project management skills.
+Then we had a shared Google Doc and went through some programming questions
+where I needed to code on the fly. Most were dealing with associative arrays.
 After that interview, I was contacted again by the recruiter to go through another round of interviews.
 I had a second Google Hangout interview with someone holding the same position I was applying for. 
 Interview was the same layout as before, but the same topics were not covered.
 After about a week, the recruiter contacted me and let me know they hired someone else.
-Nothing really unexpected, I wish I had brushed up more on networking topics, but I focused mainly on OO programming.  
+Nothing really unexpected, I wish I had brushed up more on networking topics,
+but I focused mainly on OO programming.  
 
 2.
 Had a 30 minute phone interview. The job description was pretty vague online, so we talked casually about my background. 
@@ -50,17 +53,49 @@ She asked some questions about my technical ability, including questions about:
 
 3.
 The interviewer finded me on LinkedIn, and schedule a phone screen interview.
-Some personal questions and questions about my professional historic, but focused on my techinical past (as developer/software engineer, 
+Some personal questions and questions about my professional historic, but focused 
+on my techinical past (as developer/software engineer, 
 asking about what languages I had developed, etc.).
-After this first interview, the interviewer schedule a second interview. The second interview lastest 45 minutes, focused only in technical questions.
-Unlike the first interview, the second one was 90% of the questions about Network, wich I thought really weird.
-What happens when you type "google.com" in your browser. The whole process since you press 'Enter' until the website appears on yout browser.  
+After this first interview, the interviewer schedule a second interview.
+The second interview lastest 45 minutes, focused only in technical questions.
+Unlike the first interview, the second one was 90% of the questions about Network,
+wich I thought really weird.
+What happens when you type "google.com" in your browser.
+The whole process since you press 'Enter' until the website appears on yout browser.  
 
 Explain the existing protocols. (http, tcp, ip, udp, smtp, ftp, etc, etc, etc ...).  
 
 Explain 'DNS'.  
 
-If you had a service every day you showed a different image, and after 6 months, the service stopped working on the site of only one of the clients,
-how would you resolve it? The client don't know anything about IT, VPN, access remote. In this questions, the interviewer wanted a Troubleshooting.  
+If you had a service every day you showed a different image, and after 6 months,
+the service stopped working on the site of only one of the clients,
+how would you resolve it? The client don't know anything about IT, VPN, access remote.
+In this questions, the interviewer wanted a Troubleshooting.  
 
 The interviewer showed me a database, and ask me to run a few selects.  
+
+---------------------
+https://www.quora.com/How-different-are-the-technical-questions-for-a-Google-technical-solutions-consultant-interview-from-those-of-a-software-engineer-interview
+How different are the technical questions for a Google technical solutions consultant interview from those of a software engineer interview?
+I recently interviewed with Google for a Technical Consultant role (as a new grad) and went through the entire process. I'm going to give you an idea of what to expect without disclosing anything that may be confidential, such as the actual questions.
+
+There are 5 interviews generally, I believe.
+
+The Interviews
+
+Phone screen: The phone screen has a bit of everything. It mainly focuses on web technologies, like (a) HTTP and Cookies. I'm not sure if there was any TCP/IP stuff, but it couldn't hurt to know it. Aside from web technologies, you'll probably be asked to either (b) troubleshoot something (the interviewer gives you a scenario and sees the steps you take to solve the problem) or to (c) explain some technology you know to the interviewer like he's a non-technical 8-year-old. Some (d) behavioral questions or (e) simple coding questions might also come up. In my case, I was asked about (a), (c), and (d). I probably wasn't asked about (e) because I'd already done 2 recent coding interviews and my feedback was average-to-positive, but I think in general you'll also be asked a simple coding question in the phone screen.
+On-Site 1: Basically all behavioral questions, maybe a question of type (c) above. Mainly evaluates leadership, how you think, management skills, decision making... You'll be doing a lot of the talking in this one.
+On-Site 2: This one is very similar to the phone screen, but probably without the coding part, and with more difficult questions. Add in databases to the list of possible topics (SQL/NoSQL), and questions about Google Products, specifically the product you'll be working with. I got questions about how the product works, and a similar product at Google works, and how Google might collect information from users to make it work better.
+On-Site 3: Some more troubleshooting and technical stuff about web technologies and databases, some questions about your opinion on some product decisions done at Google, etc. Still similar to the phone screen. Databases might be asked in-depth, including things about data replication on multiple servers, consistency between servers, availability, partition tolerance, etc.
+On-Site 4: The technical interview, which is very similar to the coding interview for Software Engineering positions. The questions are of the same level, in my opinion, though my recruiter told me they're actually regarded as of a lower level of difficulty. The questions I got were on-par with the average-difficulty Software Engineering interviews I'd done with Facebook and Google (which were about 4-6 overall at the time) and with the questions I'd practiced on while preparing for this interview, though. They were easier than the 'hard' questions I'd prepped with, though, so in a sense this interview is easier than Software Engineering interviews since you probably won't get any super-tough questions. Note however, that the second question I got (and it's follow-up question), were pretty tough, even though I've seen tougher, so it's by no means easy. I'd put it in the average-to-challenging range.
+What to Prep
+
+I suggest you know HTTP and Cookies in depth: what various HTTP codes are and what they're used for, HTTP pipelining/persistence, how Cookies are used by web companies both to the advantage of the user and the company itself (e.g. ads). Also know the advantages and disadvantages of Cookies (privacy, security...) and things like that. Also study up on TCP/IP and how the Internet works (its infrastructure) - this worked itself into my answers even though I wasn't asked specifically about it.
+Know a lot about databases on a high level. If you were going to design Google Maps, how would you do it? Where would you store the photos, and on one server or multiple? Would you store photos of every single place on Earth, or are there areas you don't need to have? If you were to build a massive online user-editable encyclopedia (like Wikipedia), where would you store the data, and how would you deal with partition tolerance and consistency? What about availability? (One possible answer is to replicate the data on multiple servers worldwide, and maintain partition tolerance, but forgo complete consistency). Look up the CAP theorem for more info here. Know what SQL and NoSQL are and when to use which.
+Practice explaining HTML/SQL databases/how the Internet works to an 8-year-old.
+Troubleshoot some stuff, liked why your PC might not have Internet access or why your phone can't make phone calls. I actually got a scenario that had happened to me before, exactly as is, with my sister who once needed help fixing the Internet connection on her laptop. So that helped (I only realized that after I found the answer, though, at which point I mentioned this to my interviewer, who didn't seem to mind.)
+Reflect a lot on your experiences: leadership skills, management skills, teamwork and team management and labor division, etc. Think of behavioral questions that might come up (would be relevant to the job in question) and prepare answers to them. Have an answer ready for "Why Google?" (Hint: company culture, diverse and huge product portfolio, their mission, how much you can learn from the great talent there, etc.)
+Know your Google technologies. I was in line for working as a Technical Consultant on a specific Google product, so I looked it up and looked up how it works in detail, and then looked up how other very similar technologies at Google work. Do this.
+Finally, the technical part. There's only 1 such interview so you have to do well. In my case, I was asked one coding question and 1 algorithmic question with no coding (the coding question was pretty simple algorithmically). To prepare for this, the best way is to prepare as you would for a Software Engineering role. Check Jimmy Saade's answer to How do I get a job at Facebook or Google in 6 months? and do most of what I outlined there, though you can forgo the really hard problems as the problems you're asked probably won't be that tough.
+Note that, while I was told I might be asked about things like HTML/JavaScript/CSS, I wasn't, and this might be because I didn't note anywhere that I know these (as I don't know much about them beyond the basics). So other people might get questions relating to them.
+---------------------
